@@ -1,0 +1,76 @@
+const fetch = require('node-fetch');
+const {
+  GraphQLID,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+} = require('graphql');
+
+const AppType = new GraphQLObjectType({
+  name: 'App',
+  description: 'Top-level objects that link together and contain configuration information for your packages, droplets, processes, tasks, and more.',
+  fields: () => ({
+    name: {
+      type: GraphQLString,
+      description: 'Name of the app',
+      resolve: (obj) =>  {
+        return obj.name
+      }
+    },
+    packages: {
+      type: new GraphQLList(PackageType),
+      description: 'Packages for the app.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.package.loadManyByURL(obj.links.packages.href)
+      },
+    },
+  })
+})
+
+const PackageType = new GraphQLObjectType({
+  name: 'Package',
+  description: 'An application’s ‘source code’; either raw bits for your application or a pointer to these bits.',
+  fields: () => ({
+    guid: {
+      type: GraphQLString,
+      description: 'Guid of the package',
+      resolve: (obj) =>  {
+        return obj.guid
+      }
+    },
+    state: {
+      type: GraphQLString,
+      description: 'State of the package',
+      resolve: (obj) =>  {
+        return obj.state
+      }
+    },
+  })
+})
+
+const QueryType = new GraphQLObjectType({
+  name: 'Query',
+  description: 'The root of all... queries',
+  fields: () => ({
+    apps: {
+      type: new GraphQLList(AppType),
+      description: 'List of apps',
+      args: {
+        limit: {
+          description: 'Max number to display',
+          type: GraphQLInt
+        }
+      },
+      resolve: (root, {limit}, {loaders}) => {
+        return loaders.app.loadAll(limit)
+      },
+    }
+  }),
+});
+
+module.exports = new GraphQLSchema({
+  query: QueryType,
+});

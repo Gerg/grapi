@@ -1,8 +1,6 @@
 const {
-  GraphQLID,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
@@ -34,7 +32,7 @@ const AppType = new GraphQLObjectType({
       },
     },
   })
-})
+});
 
 const PackageType = new GraphQLObjectType({
   name: 'Package',
@@ -55,7 +53,7 @@ const PackageType = new GraphQLObjectType({
       }
     },
   })
-})
+});
 
 const ProcessType = new GraphQLObjectType({
   name: 'Process',
@@ -83,7 +81,7 @@ const ProcessType = new GraphQLObjectType({
       }
     },
   })
-})
+});
 
 const QueryType = new GraphQLObjectType({
   name: 'Query',

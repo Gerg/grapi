@@ -8,7 +8,6 @@ const schema = require('./schema');
 const yaml = require('js-yaml');
 
 const config = yaml.safeLoad(fs.readFileSync('./grapi.yml', 'utf8'));
-
 const BASE_URL = config.api_url;
 let authHeader;
 
@@ -17,7 +16,7 @@ function getJSONFromURL(url) {
   const headers = {"Authorization": authHeader};
   return axios.get(url, {headers})
     .then(res => {
-      console.log(res)
+      console.log(res);
       return res.data
     })
 }
@@ -41,20 +40,20 @@ const app = express();
 app.use(graphqlHTTP(req => {
   const cacheMap = new Map();
 
-  authHeader = req.header('Authorization')
+  authHeader = req.header('Authorization');
 
   const appLoader =
     new DataLoader(keys => Promise.all(keys.map(getApps)), {cacheMap});
-  const packageLoader = {}
+  const packageLoader = {};
   const packagesByURLLoader =
     new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
-  const processLoader = {}
+  const processLoader = {};
   const processesByURLLoader =
     new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
 
-  appLoader.loadAll = appLoader.load.bind(appLoader)
-  packageLoader.loadManyByURL = packagesByURLLoader.load.bind(packagesByURLLoader)
-  processLoader.loadManyByURL = processesByURLLoader.load.bind(processesByURLLoader)
+  appLoader.loadAll = appLoader.load.bind(appLoader);
+  packageLoader.loadManyByURL = packagesByURLLoader.load.bind(packagesByURLLoader);
+  processLoader.loadManyByURL = processesByURLLoader.load.bind(processesByURLLoader);
 
   const loaders = {
     app: appLoader,

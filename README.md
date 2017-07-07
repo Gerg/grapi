@@ -3,7 +3,7 @@
 # Start
 1. `npm install`
 1. make a `grapi.yml`
-1. `npm start`
+1. `npm run dev`
 
 # Example grapi.yml
 ```yml

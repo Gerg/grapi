@@ -103,6 +103,10 @@ const InstanceType = new GraphQLObjectType({
       resolve: (obj) => {
         return obj.usage.mem / 100000
       }
+    },
+    index: {
+      type: GraphQLInt,
+      description: 'Index of the instance.'
     }
   })
 });

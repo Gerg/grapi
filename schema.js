@@ -27,6 +27,13 @@ const AppType = new GraphQLObjectType({
         return loaders.package.loadManyByURL(obj.links.packages.href)
       },
     },
+    processes: {
+      type: new GraphQLList(ProcessType),
+      description: 'Processes for the app.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.process.loadManyByURL(obj.links.processes.href)
+      },
+    },
   })
 })
 
@@ -46,6 +53,34 @@ const PackageType = new GraphQLObjectType({
       description: 'State of the package',
       resolve: (obj) =>  {
         return obj.state
+      }
+    },
+  })
+})
+
+const ProcessType = new GraphQLObjectType({
+  name: 'Process',
+  description: 'The runnable units of an app.',
+  fields: () => ({
+    guid: {
+      type: GraphQLString,
+      description: 'Guid of the process',
+      resolve: (obj) =>  {
+        return obj.guid
+      }
+    },
+    type: {
+      type: GraphQLString,
+      description: 'A unique identifier for processes belonging to an app.',
+      resolve: (obj) =>  {
+        return obj.type
+      }
+    },
+    instances: {
+      type: GraphQLString,
+      description: 'The number of instances to run.',
+      resolve: (obj) =>  {
+        return obj.instances
       }
     },
   })

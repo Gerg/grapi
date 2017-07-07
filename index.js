@@ -16,7 +16,11 @@ function getJSONFromURL(url) {
   url = url.replace('https', 'http');
   const headers = {headers: {"Authorization": authHeader}};
   return fetch(url, headers)
-    .then(res => res.json());
+    .then(res => res.json())
+    .then(res => {
+      console.log(res)
+      return res
+    })
 }
 
 function getJSONFromRelativeURL(relativeURL) {
@@ -28,7 +32,7 @@ function getApps(limit) {
     .then(json => json.resources);
 }
 
-function getPackagesByURL(url) {
+function getResourcesByURL(url) {
   return getJSONFromURL(url)
     .then(json => json.resources);
 }
@@ -38,19 +42,25 @@ const app = express();
 app.use(graphqlHTTP(req => {
   const cacheMap = new Map();
 
-  auth = req.header('Authorization')
+  authHeader = req.header('Authorization')
 
   const appLoader =
     new DataLoader(keys => Promise.all(keys.map(getApps)), {cacheMap});
   const packageLoader = {}
   const packagesByURLLoader =
-    new DataLoader(keys => Promise.all(keys.map(getPackagesByURL)), {cacheMap});
+    new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
+  const processLoader = {}
+  const processesByURLLoader =
+    new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
 
   appLoader.loadAll = appLoader.load.bind(appLoader)
   packageLoader.loadManyByURL = packagesByURLLoader.load.bind(packagesByURLLoader)
+  processLoader.loadManyByURL = processesByURLLoader.load.bind(processesByURLLoader)
+
   const loaders = {
     app: appLoader,
-    package: packageLoader
+    package: packageLoader,
+    process: processLoader,
   };
 
   return {

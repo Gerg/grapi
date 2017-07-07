@@ -17,6 +17,13 @@ const AppType = new GraphQLObjectType({
         return obj.name
       }
     },
+    guid: {
+      type: GraphQLString,
+      description: 'Guid of the app',
+      resolve: (obj) =>  {
+        return obj.guid
+      }
+    },
     packages: {
       type: new GraphQLList(PackageType),
       description: 'Packages for the app.',

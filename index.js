@@ -49,6 +49,10 @@ function getV2ResourceByURL(url) {
     .then(json => json.entity);
 }
 
+function getV2ResourceByRelativeURL(relativeURL) {
+  return getV2ResourceByURL(`${BASE_URL}${relativeURL}`);
+}
+
 const app = express();
 
 app.use(cors(), graphqlHTTP(req => {
@@ -66,11 +70,14 @@ app.use(cors(), graphqlHTTP(req => {
 
   const v2ResourceLoader =
     new DataLoader(keys => Promise.all(keys.map(getV2ResourceByURL)), {cacheMap});
+  const relativeV2ResourceLoader =
+    new DataLoader(keys => Promise.all(keys.map(getV2ResourceByRelativeURL)), {cacheMap});
 
 
   appLoader.loadAll = appLoader.load.bind(appLoader);
   resourceLoader.loadByURL = resourceByURLLoader.load.bind(resourceByURLLoader);
   resourceLoader.loadManyByURL = manyResourcesByURLLoader.load.bind(manyResourcesByURLLoader);
+  v2ResourceLoader.loadRelatively = relativeV2ResourceLoader.load.bind(relativeV2ResourceLoader);
 
   const loaders = {
     app: appLoader,

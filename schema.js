@@ -124,8 +124,17 @@ const RouteType = new GraphQLObjectType({
   fields: () => ({
     host: {
       type: GraphQLString,
-      description: 'Hostname for the address',
+      description: 'Hostname for the route',
     },
+    domain: {
+      type: GraphQLString,
+      description: 'Domain for the route',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.v2Resource.loadRelatively(obj.domain_url).then((domain) => {
+          return domain.name
+        })
+      }
+    }
   })
 });
 

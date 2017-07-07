@@ -31,6 +31,13 @@ const AppType = new GraphQLObjectType({
         return loaders.process.loadManyByURL(obj.links.processes.href)
       },
     },
+    droplets: {
+      type: new GraphQLList(DropletType),
+      description: 'Droplets for the app.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.process.loadManyByURL(obj.links.droplets.href)
+      },
+    }
   })
 });
 
@@ -78,6 +85,27 @@ const ProcessType = new GraphQLObjectType({
       description: 'The number of instances to run.',
       resolve: (obj) =>  {
         return obj.instances
+      }
+    },
+  })
+});
+
+const DropletType = new GraphQLObjectType({
+  name: 'Droplet',
+  description: 'The result of staging an application package.',
+  fields: () => ({
+    guid: {
+      type: GraphQLString,
+      description: 'Guid of the droplet',
+      resolve: (obj) =>  {
+        return obj.guid
+      }
+    },
+    state: {
+      type: GraphQLString,
+      description: 'State of the droplet.',
+      resolve: (obj) =>  {
+        return obj.state
       }
     },
   })

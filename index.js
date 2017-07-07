@@ -35,6 +35,11 @@ function getApps(url) {
     .then(json => json.resources);
 }
 
+function getTasks() {
+  return getJSONFromRelativeURL(`/v3/tasks`)
+    .then(json => json.resources);
+}
+
 function getResourceByURL(url) {
   return getJSONFromURL(url);
 }
@@ -62,6 +67,10 @@ app.use(cors(), graphqlHTTP(req => {
 
   const appLoader =
     new DataLoader(keys => Promise.all(keys.map(getApps)), {cacheMap});
+
+   const taskLoader =
+     new DataLoader(keys => Promise.all(keys.map(getTasks)), {cacheMap});
+
   const resourceLoader = {};
   const resourceByURLLoader =
     new DataLoader(keys => Promise.all(keys.map(getResourceByURL)), {cacheMap});
@@ -75,6 +84,7 @@ app.use(cors(), graphqlHTTP(req => {
 
 
   appLoader.loadAll = appLoader.load.bind(appLoader);
+  taskLoader.loadAll = taskLoader.load.bind(taskLoader, '__all__');
   resourceLoader.loadByURL = resourceByURLLoader.load.bind(resourceByURLLoader);
   resourceLoader.loadManyByURL = manyResourcesByURLLoader.load.bind(manyResourcesByURLLoader);
   v2ResourceLoader.loadRelatively = relativeV2ResourceLoader.load.bind(relativeV2ResourceLoader);
@@ -82,6 +92,7 @@ app.use(cors(), graphqlHTTP(req => {
   const loaders = {
     app: appLoader,
     resource: resourceLoader,
+    task: taskLoader,
     v2Resource: v2ResourceLoader
   };
 

@@ -49,6 +49,33 @@ const AppType = new GraphQLObjectType({
   })
 });
 
+const TaskType = new GraphQLObjectType({
+  name: 'Task',
+  description: 'One-off jobs that are intended to perform a task, stop, and be cleaned up, freeing up resources.',
+  fields: () => ({
+    name: {
+      type: GraphQLString,
+      description: 'Name of the task.'
+    },
+    command: {
+      type: GraphQLString,
+      description: 'Command that will be executed.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.resource.loadByURL(obj.links.self.href).then(task => {
+          return task.command
+        })
+      },
+    },
+    droplet: {
+      type: DropletType,
+      description: 'The droplet used to run the command.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.resource.loadByURL(obj.links.droplet.href)
+      },
+    }
+  })
+});
+
 const PackageType = new GraphQLObjectType({
   name: 'Package',
   description: 'An application’s ‘source code’; either raw bits for your application or a pointer to these bits.',
@@ -195,6 +222,13 @@ const QueryType = new GraphQLObjectType({
         const url = limit ? `/v3/apps/?per_page=${limit}` : `/v3/apps/`;
         return loaders.app.loadAll(url)
       },
+    },
+    tasks: {
+      type: new GraphQLList(TaskType),
+      description: 'List of tasks',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.task.loadAll()
+      }
     }
   }),
 });

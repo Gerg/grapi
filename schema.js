@@ -119,6 +119,13 @@ const DropletType = new GraphQLObjectType({
       type: GraphQLString,
       description: 'State of the droplet.',
     },
+    package: {
+      type: PackageType,
+      description: 'Package staged to create droplet',
+      resolve: (root, args, {loaders}) => {
+        return loaders.resource.loadByURL(root.links.package.href)
+      },
+    }
   })
 });
 

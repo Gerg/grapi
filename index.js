@@ -17,7 +17,8 @@ function getJSONFromURL(url) {
   const headers = {"Authorization": authHeader};
   return axios.get(url, {headers})
     .then(res => {
-      console.log(res);
+      console.log("Request: ", res.request.path);
+      console.log("Response: ", res.data);
       return res.data
     }).catch(err => {
       console.error(err.response.data);
@@ -34,7 +35,11 @@ function getApps(url) {
     .then(json => json.resources);
 }
 
-function getResourcesByURL(url) {
+function getResourceByURL(url) {
+  return getJSONFromURL(url);
+}
+
+function getManyResourcesByURL(url) {
   return getJSONFromURL(url)
     .then(json => json.resources);
 }
@@ -50,12 +55,15 @@ app.use(cors(), graphqlHTTP(req => {
     new DataLoader(keys => Promise.all(keys.map(getApps)), {cacheMap});
 
   const resourceLoader = {};
-  const resourcesByURLLoader =
-    new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
+  const resourceByURLLoader =
+    new DataLoader(keys => Promise.all(keys.map(getResourceByURL)), {cacheMap});
+  const manyResourcesByURLLoader =
+    new DataLoader(keys => Promise.all(keys.map(getManyResourcesByURL)), {cacheMap});
 
 
   appLoader.loadAll = appLoader.load.bind(appLoader);
-  resourceLoader.loadManyByURL = resourcesByURLLoader.load.bind(resourcesByURLLoader);
+  resourceLoader.loadByURL = resourceByURLLoader.load.bind(resourceByURLLoader);
+  resourceLoader.loadManyByURL = manyResourcesByURLLoader.load.bind(manyResourcesByURLLoader);
 
   const loaders = {
     app: appLoader,

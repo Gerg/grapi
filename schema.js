@@ -38,6 +38,13 @@ const AppType = new GraphQLObjectType({
       resolve: (obj, args, {loaders}) => {
         return loaders.resource.loadManyByURL(obj.links.droplets.href)
       },
+    },
+    current_droplet: {
+      type: DropletType,
+      description: 'Droplet the app will use when running.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.resource.loadByURL(obj.links.current_droplet.href)
+      },
     }
   })
 });

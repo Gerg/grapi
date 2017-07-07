@@ -97,7 +97,8 @@ const QueryType = new GraphQLObjectType({
         }
       },
       resolve: (root, {limit}, {loaders}) => {
-        return loaders.app.loadAll(limit)
+        const url = limit ? `/v3/apps/?per_page=${limit}` : `/v3/apps/`;
+        return loaders.app.loadAll(url)
       },
     }
   }),

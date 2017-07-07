@@ -14,22 +14,22 @@ let authHeader;
 function getJSONFromURL(url) {
   url = url.replace('https', 'http');
   const headers = {"Authorization": authHeader};
-    return axios.get(url, {headers})
-      .then(res => {
-          console.log(res);
-          return res.data
-      }).catch(err => {
-          console.error(err.response.data);
-          throw new Error(JSON.stringify(err.response.data));
-      });
+  return axios.get(url, {headers})
+    .then(res => {
+      console.log(res);
+      return res.data
+    }).catch(err => {
+      console.error(err.response.data);
+      throw new Error(JSON.stringify(err.response.data));
+    });
 }
 
 function getJSONFromRelativeURL(relativeURL) {
   return getJSONFromURL(`${BASE_URL}${relativeURL}`);
 }
 
-function getApps(limit) {
-  return getJSONFromRelativeURL(`/v3/apps/?per_page=${limit}`)
+function getApps(url) {
+  return getJSONFromRelativeURL(url)
     .then(json => json.resources);
 }
 

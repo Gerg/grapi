@@ -6,6 +6,7 @@ const fs = require('fs');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema');
 const yaml = require('js-yaml');
+const cors = require('cors');
 
 const config = yaml.safeLoad(fs.readFileSync('./grapi.yml', 'utf8'));
 const BASE_URL = config.api_url;
@@ -40,7 +41,7 @@ function getResourcesByURL(url) {
 
 const app = express();
 
-app.use(graphqlHTTP(req => {
+app.use(cors(), graphqlHTTP(req => {
   const cacheMap = new Map();
 
   authHeader = req.header('Authorization');
@@ -68,6 +69,6 @@ app.use(graphqlHTTP(req => {
 }));
 
 app.listen(
-  5000,
+  process.env.PORT || 5000,
   () => console.log('GraphQL Server running at http://localhost:5000')
 );

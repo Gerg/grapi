@@ -44,6 +44,11 @@ function getManyResourcesByURL(url) {
     .then(json => json.resources);
 }
 
+function getV2ResourceByURL(url) {
+  return getJSONFromURL(url)
+    .then(json => json.entity);
+}
+
 const app = express();
 
 app.use(cors(), graphqlHTTP(req => {
@@ -53,12 +58,14 @@ app.use(cors(), graphqlHTTP(req => {
 
   const appLoader =
     new DataLoader(keys => Promise.all(keys.map(getApps)), {cacheMap});
-
   const resourceLoader = {};
   const resourceByURLLoader =
     new DataLoader(keys => Promise.all(keys.map(getResourceByURL)), {cacheMap});
   const manyResourcesByURLLoader =
     new DataLoader(keys => Promise.all(keys.map(getManyResourcesByURL)), {cacheMap});
+
+  const v2ResourceLoader =
+    new DataLoader(keys => Promise.all(keys.map(getV2ResourceByURL)), {cacheMap});
 
 
   appLoader.loadAll = appLoader.load.bind(appLoader);
@@ -68,6 +75,7 @@ app.use(cors(), graphqlHTTP(req => {
   const loaders = {
     app: appLoader,
     resource: resourceLoader,
+    v2Resource: v2ResourceLoader
   };
 
   return {

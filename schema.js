@@ -96,7 +96,36 @@ const ProcessType = new GraphQLObjectType({
       resolve: (obj, args, {loaders}) => {
         return loaders.resource.loadManyByURL(obj.links.stats.href)
       },
+    },
+    routes: {
+      type: new GraphQLList(RouteType),
+      description: 'Instances of a process.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.resource.loadByURL(obj.links.app.href)
+          .then((app) => {
+            return loaders.resource.loadManyByURL(app.links.route_mappings.href)
+          }).then((route_mappings) => {
+            const route_urls = route_mappings.filter((mapping) => {
+              return mapping.links.process.href.split("/").pop() === obj.type
+            }).map((mapping) => {
+              return mapping.links.route.href
+            });
+
+            return loaders.v2Resource.loadMany(route_urls)
+          })
+      },
     }
+  })
+});
+
+const RouteType = new GraphQLObjectType({
+  name: 'Route',
+  description: 'Address to a process',
+  fields: () => ({
+    host: {
+      type: GraphQLString,
+      description: 'Hostname for the address',
+    },
   })
 });
 

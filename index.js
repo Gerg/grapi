@@ -47,27 +47,18 @@ app.use(graphqlHTTP(req => {
 
   const appLoader =
     new DataLoader(keys => Promise.all(keys.map(getApps)), {cacheMap});
-  const dropletLoader = {};
-  const dropletsByURLLoader =
-    new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
-  const packageLoader = {};
-  const packagesByURLLoader =
-    new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
-  const processLoader = {};
-  const processesByURLLoader =
+
+  const resourceLoader = {};
+  const resourcesByURLLoader =
     new DataLoader(keys => Promise.all(keys.map(getResourcesByURL)), {cacheMap});
 
 
   appLoader.loadAll = appLoader.load.bind(appLoader);
-  packageLoader.loadManyByURL = packagesByURLLoader.load.bind(packagesByURLLoader);
-  processLoader.loadManyByURL = processesByURLLoader.load.bind(processesByURLLoader);
-  dropletLoader.loadManyByURL = dropletsByURLLoader.load.bind(dropletsByURLLoader);
+  resourceLoader.loadManyByURL = resourcesByURLLoader.load.bind(resourcesByURLLoader);
 
   const loaders = {
     app: appLoader,
-    droplet: dropletLoader,
-    package: packageLoader,
-    process: processLoader,
+    resource: resourceLoader,
   };
 
   return {

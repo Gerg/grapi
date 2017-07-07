@@ -13,5 +13,5 @@ api_url: http://api.run.pviotal.io
 
 # Example query
 ```
-curl -X POST -H "Content-Type: application/graphql" -H "Authorization: $(cf oauth-token)" localhost:5000/graphql -d "{apps(limit: 1) {name, packages {guid, state}, processes {guid, instances, type}, droplets {guid, state}}} | jq"
+curl -X POST -H "Content-Type: application/graphql" -H "Authorization: $(cf oauth-token)" localhost:5000/graphql -d "{apps(limit: 1) {name, packages {guid, state}, processes {guid, type, allocated_memory_mb, instance_count, instances {actual_memory_mb}}, droplets {guid, state}}}" | jq
 ```

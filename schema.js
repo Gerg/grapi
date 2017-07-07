@@ -22,21 +22,21 @@ const AppType = new GraphQLObjectType({
       type: new GraphQLList(PackageType),
       description: 'Packages for the app.',
       resolve: (obj, args, {loaders}) => {
-        return loaders.package.loadManyByURL(obj.links.packages.href)
+        return loaders.resource.loadManyByURL(obj.links.packages.href)
       },
     },
     processes: {
       type: new GraphQLList(ProcessType),
       description: 'Processes for the app.',
       resolve: (obj, args, {loaders}) => {
-        return loaders.process.loadManyByURL(obj.links.processes.href)
+        return loaders.resource.loadManyByURL(obj.links.processes.href)
       },
     },
     droplets: {
       type: new GraphQLList(DropletType),
       description: 'Droplets for the app.',
       resolve: (obj, args, {loaders}) => {
-        return loaders.process.loadManyByURL(obj.links.droplets.href)
+        return loaders.resource.loadManyByURL(obj.links.droplets.href)
       },
     }
   })
@@ -69,10 +69,41 @@ const ProcessType = new GraphQLObjectType({
       type: GraphQLString,
       description: 'A unique identifier for processes belonging to an app.',
     },
-    instances: {
-      type: GraphQLString,
+    instance_count: {
+      type: GraphQLInt,
       description: 'The number of instances to run.',
+      resolve: (obj) => {
+        return obj.instances
+      }
     },
+    allocated_memory_mb: {
+      type: GraphQLInt,
+      description: 'Memory allocated per instance in mb',
+      resolve: (obj) => {
+        return obj.memory_in_mb
+      }
+    },
+    instances: {
+      type: new GraphQLList(InstanceType),
+      description: 'Instances of a process.',
+      resolve: (obj, args, {loaders}) => {
+        return loaders.resource.loadManyByURL(obj.links.stats.href)
+      },
+    }
+  })
+});
+
+const InstanceType = new GraphQLObjectType({
+  name: 'Instance',
+  description: 'Instance of a process',
+  fields: () => ({
+    actual_memory_mb: {
+      type: GraphQLInt,
+      description: 'Memory used by the instance in mb',
+      resolve: (obj) => {
+        return obj.usage.mem / 100000
+      }
+    }
   })
 });
 

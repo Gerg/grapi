@@ -13,16 +13,10 @@ const AppType = new GraphQLObjectType({
     name: {
       type: GraphQLString,
       description: 'Name of the app',
-      resolve: (obj) =>  {
-        return obj.name
-      }
     },
     guid: {
       type: GraphQLString,
       description: 'Guid of the app',
-      resolve: (obj) =>  {
-        return obj.guid
-      }
     },
     packages: {
       type: new GraphQLList(PackageType),
@@ -55,16 +49,10 @@ const PackageType = new GraphQLObjectType({
     guid: {
       type: GraphQLString,
       description: 'Guid of the package',
-      resolve: (obj) =>  {
-        return obj.guid
-      }
     },
     state: {
       type: GraphQLString,
       description: 'State of the package',
-      resolve: (obj) =>  {
-        return obj.state
-      }
     },
   })
 });
@@ -76,23 +64,14 @@ const ProcessType = new GraphQLObjectType({
     guid: {
       type: GraphQLString,
       description: 'Guid of the process',
-      resolve: (obj) =>  {
-        return obj.guid
-      }
     },
     type: {
       type: GraphQLString,
       description: 'A unique identifier for processes belonging to an app.',
-      resolve: (obj) =>  {
-        return obj.type
-      }
     },
     instances: {
       type: GraphQLString,
       description: 'The number of instances to run.',
-      resolve: (obj) =>  {
-        return obj.instances
-      }
     },
   })
 });
@@ -104,16 +83,10 @@ const DropletType = new GraphQLObjectType({
     guid: {
       type: GraphQLString,
       description: 'Guid of the droplet',
-      resolve: (obj) =>  {
-        return obj.guid
-      }
     },
     state: {
       type: GraphQLString,
       description: 'State of the droplet.',
-      resolve: (obj) =>  {
-        return obj.state
-      }
     },
   })
 });

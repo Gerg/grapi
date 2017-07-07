@@ -1,7 +1,7 @@
 const DataLoader = require('dataloader');
 
 const express = require('express');
-const fetch = require('node-fetch');
+const axios = require('axios');
 const fs = require('fs');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema');
@@ -14,12 +14,11 @@ let authHeader;
 
 function getJSONFromURL(url) {
   url = url.replace('https', 'http');
-  const headers = {headers: {"Authorization": authHeader}};
-  return fetch(url, headers)
-    .then(res => res.json())
+  const headers = {"Authorization": authHeader};
+  return axios.get(url, {headers})
     .then(res => {
       console.log(res)
-      return res
+      return res.data
     })
 }
 
